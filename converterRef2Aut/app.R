@@ -8,6 +8,7 @@
 #
 
 library(shiny)
+library(igraph)
 
 # Define UI for application that draws a histogram
 ui <- fluidPage(
@@ -19,7 +20,8 @@ ui <- fluidPage(
     "Write grammar here"
   ),
   
-  textOutput("test")
+  textOutput("test"),
+  plotOutput("automata", height = "800px")
 )
 
 # Define server logic required to draw a histogram
