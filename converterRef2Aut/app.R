@@ -80,7 +80,10 @@ server <- function(input, output) {
     
     g <- graph_from_data_frame(edges, directed = TRUE)
     
-    plot(g, edge.label = E(g)$label, vertex.color = "white")    
+    V(g)$color <- ifelse (V(g)$name == "S", "green",
+                      ifelse (V(g)$name == "Z", "red", "white"))
+    
+    plot(g, edge.label = E(g)$label)    
   })
 }
 
