@@ -69,6 +69,9 @@ rule_analizer <- function(rules){
     # eliminar transiciones vacias
     transitions <- transitions[transitions != ""]
 
+    # Solo se aceptan transiciones que tengan al menos una letra minuscula (no acepta 2 mayusuculas)
+    transitions <- transitions[grepl("[a-z]", transitions)]
+
     # Si despues de limpiar no queda ninguna transicion, se ignora
     if (length(transitions) == 0) {
       next
