@@ -91,6 +91,63 @@ rule_analizer <- function(rules){
   return(all_edges)
 }
 
+#funcion para detectar transiciones invalidas y avisarle al usuario
+get_invalid_transitions <- function(rules) {
+  rule_vector <- strsplit(rules, "\n")[[1]]
+  rule_vector <- trimws(rule_vector)
+  rule_vector <- rule_vector[rule_vector != ""]
+  
+  warnings <- c()
+  
+  for (rule in rule_vector) {
+    
+    original_rule <- rule
+    
+    # Si no tiene -> se ignora
+    if (!grepl("->", rule)) {
+      next
+    }
+    
+    rule <- strsplit(rule, "->")[[1]]
+    
+    # Si esta incompleto se ignora
+    if (length(rule) < 2) {
+      next
+    }
+    
+    from <- trimws(rule[1])
+    right <- trimws(rule[2])
+    
+    # Si cualquier lado esta vacio, se ignora
+    if (from == "" || right == "") {
+      next
+    }
+    
+    transitions <- strsplit(right, "\\|")[[1]]
+    transitions <- trimws(transitions)
+    transitions <- transitions[transitions != ""]
+    
+    if (length(transitions) == 0) {
+      next
+    }
+    
+    # Detecta transiciones sin letra minuscula
+    invalid_transitions <- transitions[!grepl("[a-z]", transitions)]
+    
+    if (length(invalid_transitions) > 0) {
+      warning_message <- paste0(
+        "Invalid transition(s) ignored in rule '",
+        original_rule,
+        "': ",
+        paste(invalid_transitions, collapse = ", ")
+      )
+      
+      warnings <- c(warnings, warning_message)
+    }
+  }
+  
+  return(warnings)
+}
 
 # Funcion para verificar si es determinista o no, es determinista cuando un estado no tiene mas de una transicion con el mismo simbolo
 is_deterministic <- function(edges) {
@@ -128,6 +185,9 @@ ui <- fluidPage(
   tags$h4("Automaton type:"),
   textOutput("determinism_label"),
 
+  tags$h4("Warnings:"),
+  textOutput("warning_label"),
+
   plotOutput("automata", height = "600px")
 )
 
@@ -138,6 +198,17 @@ server <- function(input, output) {
   # reactive expression que analiza la grammatica cada que se escribe algo
   edges_reactive <- reactive({
     rule_analizer(input$grammar)
+  })
+
+  output$warning_label <- renderText({
+  
+    warnings <- get_invalid_transitions(input$grammar)
+    
+    if (length(warnings) == 0) {
+      return("No warnings")
+    }
+    
+    return(paste(warnings, collapse = "\n"))
   })
   
   output$determinism_label <- renderText({
