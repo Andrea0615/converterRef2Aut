@@ -103,14 +103,12 @@ get_invalid_transitions <- function(rules) {
     
     original_rule <- rule
     
-    # Si no tiene -> se ignora
     if (!grepl("->", rule)) {
       next
     }
     
     rule <- strsplit(rule, "->")[[1]]
     
-    # Si esta incompleto se ignora
     if (length(rule) < 2) {
       next
     }
@@ -118,7 +116,6 @@ get_invalid_transitions <- function(rules) {
     from <- trimws(rule[1])
     right <- trimws(rule[2])
     
-    # Si cualquier lado esta vacio, se ignora
     if (from == "" || right == "") {
       next
     }
@@ -130,8 +127,6 @@ get_invalid_transitions <- function(rules) {
     if (length(transitions) == 0) {
       next
     }
-    
-    # Detecta transiciones sin letra minuscula
     invalid_transitions <- transitions[!grepl("[a-z]", transitions)]
     
     if (length(invalid_transitions) > 0) {
