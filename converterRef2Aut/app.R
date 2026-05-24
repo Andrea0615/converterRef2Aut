@@ -140,6 +140,10 @@ server <- function(input, output) {
   output$determinism_label <- renderText({
     
     edges <- edges_reactive()
+
+    if (nrow(edges) == 0) {
+    return("No valid grammar")
+    }
     
     if (is_deterministic(edges)) {
       return("deterministic")
