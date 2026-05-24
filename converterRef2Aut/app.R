@@ -142,7 +142,7 @@ server <- function(input, output) {
     edges <- edges_reactive()
 
     if (nrow(edges) == 0) {
-    return("No valid grammar")
+      return("No valid grammar")
     }
     
     if (is_deterministic(edges)) {
